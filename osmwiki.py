@@ -24,7 +24,7 @@ def loadAllUserGroups(user,password):
 def __loginSite(user, password):
     global site
     #connect to OSM wiki
-    site = wiki.Wiki("http://wiki.openstreetmap.org/w/api.php")
+    site = wiki.Wiki("https://wiki.openstreetmap.org/w/api.php")
     site.login(user,password)
     site.setUserAgent("UserGroupsBot 0.1")
     
@@ -71,7 +71,7 @@ def __getTemplateAttributes(page):
     if where==None: where=""
     url=attrs.get("url","")
     mail=attrs.get("mailing_list_url","")
-    wikipage="http://wiki.openstreetmap.org/wiki/"+page.title
+    wikipage="https://wiki.openstreetmap.org/wiki/"+page.title
     photo=attrs.get("photo","")
     if not photo.isspace() and len(photo)>1 :
         #some might use additional photo formating
@@ -180,7 +180,7 @@ def __getTemplateAttributesLegacy(page):
     if where==None: where=""
     url=attrs.get("url","")
     mail=attrs.get("mailing_list_url","")
-    wikipage="http://wiki.openstreetmap.org/wiki/"+page.title
+    wikipage="https://wiki.openstreetmap.org/wiki/"+page.title
     photo=""
     if not photo.isspace() and len(photo)>1 :
         #some might use additional photo formating
