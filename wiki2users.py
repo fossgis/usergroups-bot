@@ -74,10 +74,13 @@ if __name__ == '__main__':
     #processing
     groups=osmwiki.loadAllUserGroups(user, password)
     path,x=os.path.split(sys.argv[0])
+    usergroups.exportUserGroupsJSON(groups, os.path.join(path, "www", "osm_user_groups.json"))
     filename=os.path.join(path,"www","osm_user_groups.kml")
     usergroups.exportUserGroups(groups,filename)
+    usergroups.exportUserGroupsJSON(groups, filename)
     filename=os.path.join(path,"www","osm_user_groups_DACH.kml")
     usergroups.exportUserGroupsCountries(groups, ["DE","AT","CH"], filename)
+    usergroups.exportUserGroupsCountriesJSON(groups, ["DE", "AT", "CH"], os.path.join(path, "www", "osm_user_groups_DACH.json"))
     filename=os.path.join(path,"www","stat.js")
     writeStat(filename,groups)
     usergroups.saveCache(groups)
