@@ -4,3 +4,13 @@
 www/osm_user_groups_DACH.kml
 www/osm_user_groups.kml
 www/stat.js
+
+############################
+# compiled files 
+############################
+*.pyc
+
+############################
+# cache files
+############################
+*.cache
