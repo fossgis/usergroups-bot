@@ -1,12 +1,14 @@
 ############################
-# generated files 
+# generated files
 ############################
 www/osm_user_groups_DACH.kml
 www/osm_user_groups.kml
+www/osm_user_groups_DACH.json
+www/osm_user_groups.json
 www/stat.js
 
 ############################
-# compiled files 
+# compiled files
 ############################
 *.pyc
 

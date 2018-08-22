@@ -5,8 +5,10 @@ Created on 20.06.2011
 @author: Matthias Meißer
 '''
 
+import geojson
 import pickle
 import mykml
+import codecs
 import os.path
 import sys
 import logging
@@ -53,9 +55,29 @@ def __appendNewestUserGroups(newgroups):
     pickle.dump(lastgroups,fcache)
     fcache.close()
     return lastgroups
-    
-    
-      
+
+def _exportUserGroupsJSON(groups, filename, langCodes=None):
+    features = []
+    for ugroup in groups:
+        if langCodes is not None and ugroup["country"] not in langCodes:
+            continue
+        try:
+            lon = float(ugroup["lonlat"][0])
+            lat = float(ugroup["lonlat"][1])
+            properties = ugroup.copy()
+            properties.pop("lonlat", None)
+            features.append(geojson.Feature(geometry=geojson.Point((lon, lat)), properties=properties))
+        except ValueError as err:
+            logging.log(logging.WARNING, "Coordinate parse error for user group {}: {}".format(ugroup.get("name", ""), err))
+    collection = geojson.FeatureCollection(features)
+    with codecs.open(filename,'w+',"utf-8") as f:
+        geojson.dump(collection, f)
+
+def exportUserGroupsJSON(groups, filename):
+    _exportUserGroupsJSON(groups, filename)
+
+def exportUserGroupsCountriesJSON(groups, langCodes, filename):
+    _exportUserGroupsJSON(groups, filename, langCodes)
 
 def exportUserGroups(groups,filename):
     #create a KML

@@ -17,7 +17,7 @@ http://wiki.openstreetmap.org/wiki/User:UserGroupsBot
 import osmwiki
 import usergroups
 #import zombies
-from time import * 
+from time import *
 import getopt, sys
 import urllib
 import re
@@ -31,9 +31,9 @@ ugroup={} #the parsed dictionary of the template attributes
 count=0
 
 
-    
 
-def writeStat(filename,groups):
+
+def writeStat(groups, filename):
     count=len(groups)
     recentGroups=usergroups.getNewestUserGroups(groups)
     lastGroups=u""
@@ -52,9 +52,9 @@ if __name__ == '__main__':
     global site
     global k
     #init logging
-    handler = logging.StreamHandler(sys.stdout)    
-    logger = logging.getLogger() 
-    logger.addHandler(handler) 
+    handler = logging.StreamHandler(sys.stdout)
+    logger = logging.getLogger()
+    logger.addHandler(handler)
     #parse args
     try:
         opts, args = getopt.getopt(sys.argv[1:], "u:p:d", ["user=", "password=","debug"])
@@ -74,15 +74,18 @@ if __name__ == '__main__':
     #processing
     groups=osmwiki.loadAllUserGroups(user, password)
     path,x=os.path.split(sys.argv[0])
-    filename=os.path.join(path,"www","osm_user_groups.kml")
-    usergroups.exportUserGroups(groups,filename)
-    filename=os.path.join(path,"www","osm_user_groups_DACH.kml")
-    usergroups.exportUserGroupsCountries(groups, ["DE","AT","CH"], filename)
-    filename=os.path.join(path,"www","stat.js")
-    writeStat(filename,groups)
+
+    #save to kml
+    usergroups.exportUserGroups(groups,os.path.join(path,"www","osm_user_groups.kml"))
+    usergroups.exportUserGroupsCountries(groups, ["DE","AT","CH"], os.path.join(path,"www","osm_user_groups_DACH.kml"))
+
+    #save to json
+    usergroups.exportUserGroupsJSON(groups, os.path.join(path, "www", "osm_user_groups.json"))
+    usergroups.exportUserGroupsCountriesJSON(groups, ["DE", "AT", "CH"], os.path.join(path, "www", "osm_user_groups_DACH.json"))
+
+    #generate stats.js
+    writeStat(groups, os.path.join(path,"www","stat.js"))
     usergroups.saveCache(groups)
     #z=zombies.loadAllZombies(user, password)
     #filename=os.path.join(path,"www","cowboys.kml")
     #zombies.exportZombies(z, filename)
-        
-    
