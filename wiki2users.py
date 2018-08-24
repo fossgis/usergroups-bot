@@ -26,12 +26,12 @@ import sys
 import os.path
 import logging
 import codecs
+import warnings
 
 ugroup={} #the parsed dictionary of the template attributes
 count=0
 
-
-
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 def writeStat(groups, filename):
     count=len(groups)
