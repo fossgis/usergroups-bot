@@ -73,7 +73,7 @@ def __getTemplateAttributes(page):
     where=__expandLinks(attrs.get("meets_where",""))
     if where==None: where=""
     url=attrs.get("url","")
-    if url.find(" "): url=url[:url.find(" ")]
+    if url.find(" ")>0: url=url[:url.find(" ")]
     mail=attrs.get("mailing_list_url","")
     wikipage="https://wiki.openstreetmap.org/wiki/"+page.title
     photo=attrs.get("photo","")
