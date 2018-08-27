@@ -41,9 +41,9 @@ def __getUsergroups(query):
             logging.log(logging.DEBUG, "request "+page.title)
             try:
                 usergroup=__getTemplateAttributes(page)
-                if usergroups is not None: usergroups.append(usergroup)
-            except:
-                logging.log(logging.ERROR, "error parsing: "+page.title)
+                usergroups.append(usergroup)
+            except Exception as e:
+                logging.log(logging.ERROR, "error parsing: " + page.title + " - " + unicode(e))
 
     return usergroups
 
@@ -76,6 +76,7 @@ def __getTemplateAttributes(page):
     if url.find(" ")>0: url=url[:url.find(" ")]
     mail=attrs.get("mailing_list_url","")
     wikipage="https://wiki.openstreetmap.org/wiki/"+page.title
+    if url[-20:].replace(" ","_")==wikipage[-20:].replace(" ","_"): url=""
     photo=attrs.get("photo","")
     if not photo.isspace() and len(photo)>1 :
         #some might use additional photo formating
