@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OSM User Groups around the world</title>
+  <link rel="shortcut icon" href="favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="leaflet/leaflet.css" />
+  <script src="leaflet/leaflet.js"></script>
+  <script src="stat.js" charset="utf-8"></script>
+</head>
+
+<body>
+  <div id="mapid">&nbsp;</div>
+  <script>
+    function getPopupContent(data) {
+      content = "<p class='pop_heading'>" + data.name + "</p>";
+      if (data.photo) {
+        content += '<img src="' + data.photo + '" class="pop_image" width="300px"><br>';
+      } else {
+        content += '<img src="nophoto.png" class="pop_image" title="No photo available"><br>';
+      }
+      if (data.when) content += "<p class='pop_content'>" + data.when;
+      else content += "<p class='pop_content'> When: ?";
+      if (data.where) content += "<br>Location: " + data.where + "</p>";
+      else content += "<br>Location: ?</p>";
+      content += '<a href="' + data.wiki + '"' + " class='pop_link'>Wiki</a>";
+      if (data.url) {
+        content += ' | <a href="' + data.url + '"' + " class='pop_link'>WWW</a>";
+      }
+      if (data.mail) {
+        content += ' | <a href="' + data.mail + '"' + " class='pop_link'>Mail</a>";
+      }
+      return content;
+    }
+
+    var mymap = L.map('mapid').setView([51.505, -0.09], 2);
+
+    L.tileLayer("http://{s}.tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png", {
+      minZoom: 2,
+      maxZoom: 16,
+      attribution: 'Map data © OpenStreetMap contributors'
+    }).addTo(mymap);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'osm_user_groups.json');
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        var data = JSON.parse(xhr.responseText);
+        L.geoJSON(data).bindPopup(function(features) {
+          return getPopupContent(features.feature.properties);
+        }).addTo(mymap);
+      }
+    };
+    xhr.send();
+  </script>
+  <footer>
+    Data harvested by <a href='http://wiki.openstreetmap.org/wiki/User:UserGroupsBot'>UserGroupsBot</a> at <script>
+      document.write(export_date);
+    </script> (every 6 hours) | <a href="lastrun.log">Log of last run</a><br>
+    <script>
+      document.write(export_number);
+    </script> groups, recently: <script>
+      document.write(export_recent);
+    </script>
+    </p>
+  </footer>
+</body>
+
+</html>
