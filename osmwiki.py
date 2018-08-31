@@ -83,7 +83,8 @@ def __getTemplateAttributes(page):
         if photo.find("|")>-1:
             photo=photo[:photo.find("|")]
         photo=__getImageInfos(photo) #the fotos need additional API magic
-    return {"name":name,"lonlat":point,"where":where,"when":when,"url":url,"wiki":wikipage,"mail":mail,"photo":photo,"country":country}
+    lastedit=page.getHistory(limit=1)[0]["timestamp"]
+    return {"name":name,"lonlat":point,"where":where,"when":when,"url":url,"wiki":wikipage,"mail":mail,"photo":photo,"country":country,"lastedit":lastedit}
 
 def __nospaces(s):
     return (s.lstrip().rstrip()).replace('\n',"")
