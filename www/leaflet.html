@@ -6,21 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OSM User Groups around the world</title>
   <link rel="shortcut icon" href="favicon.png" />
-  <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="leaflet/leaflet.css" />
   <script src="leaflet/leaflet.js"></script>
   <script src="stat.js" charset="utf-8"></script>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <div id="mapid">&nbsp;</div>
   <script>
     function getPopupContent(data) {
-      content = "<p class='pop_heading'>" + data.name + "</p>";
+      content = "<h2 class='pop_heading'>" + data.name + "</h2>";
       if (data.photo) {
-        content += '<img src="' + data.photo + '" class="pop_image" width="300px"><br>';
+        content += '<img src="' + data.photo + '" class="pop_image" width="300px">';
       } else {
-        content += '<img src="nophoto.png" class="pop_image" title="No photo available"><br>';
+        content += '<img src="nophoto.png" class="pop_image" title="No photo available">';
       }
       if (data.when) content += "<p class='pop_content'>" + data.when;
       else content += "<p class='pop_content'> When: ?";
@@ -33,6 +33,8 @@
       if (data.mail) {
         content += ' | <a href="' + data.mail + '"' + " class='pop_link'>Mail</a>";
       }
+      content += "<br>";
+      content += "<small><i>Last edit: " + data.lastedit + "</i></small>";
       return content;
     }
 

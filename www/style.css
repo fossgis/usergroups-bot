@@ -22,24 +22,23 @@ footer {
   height: 90%;
 }
 
+.leaflet-popup-content-wrapper {
+  min-width: 275px;
+}
+
 .pop_heading {
   font-weight: bold;
-  font-size: 16px
+  font-size: 1.25em
 }
 
-.pop_image {
-  margin-right: 20px;
-  margin-bottom: 10px
-}
+.pop_image {}
 
-.pop_text {
-  font-size: 12px;
+.pop_content {
+  font-size: 1em;
   text-decoration: none;
-  padding-right: 5px;
-  padding-top: 5px;
 }
 
 .pop_link {
-  font-size: 12px;
+  font-size: 1em;
   text-decoration: none;
 }
