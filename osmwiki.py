@@ -60,13 +60,13 @@ def __getUsergroups(query):
                     usergroup["lastedit"], "%Y-%m-%dT%H:%M:%SZ")
                 days = today - lastedit
                 if days.days > 365:
-                    logging.warning("warning: " + page.title +
-                                    " - " + "last edit: " + usergroup["lastedit"])
+                    logging.info("info: " + page.title +
+                                 " - " + "last edit: " + usergroup["lastedit"])
 
                 usergroups.append(usergroup)
 
             except Exception as e:
-                logging.log(logging.ERROR, "error parsing: " +
+                logging.log(logging.ERROR, "error: " +
                             page.title + " - " + unicode(e))
 
     return usergroups
