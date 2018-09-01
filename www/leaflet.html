@@ -8,6 +8,9 @@
   <link rel="shortcut icon" href="favicon.png" />
   <link rel="stylesheet" href="leaflet/leaflet.css" />
   <script src="leaflet/leaflet.js"></script>
+  <link rel="stylesheet" href="leaflet/MarkerCluster.css" />
+  <link rel="stylesheet" href="leaflet/MarkerCluster.Default.css" />
+  <script src="leaflet/leaflet.markercluster.js"></script>
   <script src="stat.js" charset="utf-8"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -46,18 +49,24 @@
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
     }).addTo(mymap);
 
+    var markers = L.markerClusterGroup();
     let xhr = new XMLHttpRequest();
     xhr.open('GET', 'osm_user_groups.json');
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function() {
       if (xhr.status === 200) {
         var data = JSON.parse(xhr.responseText);
-        L.geoJSON(data).bindPopup(function(features) {
-          return getPopupContent(features.feature.properties);
-        }).addTo(mymap);
+        var geoJsonLayer = L.geoJSON(data, {
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup(getPopupContent(feature.properties));
+          }
+        });
+        markers.addLayer(geoJsonLayer);
       }
     };
     xhr.send();
+
+    mymap.addLayer(markers);
   </script>
   <footer>
     Data harvested by <a href='http://wiki.openstreetmap.org/wiki/User:UserGroupsBot'>UserGroupsBot</a> at <script>
