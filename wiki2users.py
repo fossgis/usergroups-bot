@@ -44,7 +44,7 @@ def writeStat(groups, filename):
     lastGroups = lastGroups[1:]
     out = codecs.open(filename, 'w+', "utf-8")
     out.write('var export_date="' +
-              strftime("%Y-%m-%dT %H:%M:%S UTC", gmtime()) + '";')
+              strftime("%Y-%m-%dT%H:%M:%SZ", gmtime()) + '";')
     out.write('var export_number="' + str(count) + '";')
     out.write('var export_recent="' + lastGroups + '";')
     out.close()
