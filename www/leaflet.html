@@ -60,7 +60,10 @@
         var data = JSON.parse(xhr.responseText);
         var geoJsonLayer = L.geoJSON(data, {
           onEachFeature: function(feature, layer) {
-            layer.bindPopup(getPopupContent(feature.properties));
+            layer.bindPopup(getPopupContent(feature.properties), {
+              keepInView: true,
+              autoPanPadding: [20, 20]
+            });
           }
         });
         markers.addLayer(geoJsonLayer);
