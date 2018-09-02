@@ -41,6 +41,7 @@ def __getTemplatesList():
 def __getUsergroups(query):
     today = datetime.datetime.today()
     usergroups = []
+    dublicates = set()
     list = pagelist.listFromQuery(site, query["query"]["embeddedin"])
     for page in list:
         # some embedded the template within other templates so we receive fakes
@@ -62,13 +63,14 @@ def __getUsergroups(query):
                 if days.days > 365:
                     logging.info("info: " + page.title +
                                  " - " + "last edit: " + usergroup["lastedit"])
-
+                if usergroup["lonlat"] in dublicates:
+                    logging.error("error: " + page.title +
+                                  " - " + "lat/lon already used")
                 usergroups.append(usergroup)
-
+                dublicates.add(usergroup["lonlat"])
             except Exception as e:
                 logging.log(logging.ERROR, "error: " +
                             page.title + " - " + unicode(e))
-
     return usergroups
 
 
