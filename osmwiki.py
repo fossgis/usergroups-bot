@@ -57,6 +57,9 @@ def __getUsergroups(query):
                 if usergroup["name"] == "":
                     logging.warning(
                         "warning: " + page.title + " - " + "no name")
+                if usergroup["country"] == "":
+                    logging.warning("warning: " + page.title + " - " +
+                                    "no country set, so isn't in any country-filtered files (e.g. osm_user_groups_DACH.json)")
                 lastedit = datetime.datetime.strptime(
                     usergroup["lastedit"], "%Y-%m-%dT%H:%M:%SZ")
                 days = today - lastedit
