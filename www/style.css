@@ -1,0 +1,41 @@
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+footer {
+  position: fixed;
+  right: 0;
+  left: 0;
+  padding: 10px;
+  background-color: #cbeea7;
+}
+
+#mapid {
+  height: 90%;
+}
+
+.leaflet-popup-content-wrapper {
+  min-width: 275px;
+}
+
+.pop_heading {
+  font-weight: bold;
+  font-size: 1.25em
+}
+
+.pop_image {}
+
+.pop_content {
+  font-size: 1em;
+  text-decoration: none;
+}
+
+.pop_link {
+  font-size: 1em;
+  text-decoration: none;
+}
