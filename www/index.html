@@ -52,6 +52,14 @@
     var markers = L.markerClusterGroup({
       maxClusterRadius: 50
     });
+
+    var iconLocalgroup = L.icon({
+      iconUrl: 'localgroup.png',
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+      popupAnchor: [0, -11]
+    });
+
     let xhr = new XMLHttpRequest();
     xhr.open('GET', 'osm_user_groups.json');
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -59,6 +67,11 @@
       if (xhr.status === 200) {
         var data = JSON.parse(xhr.responseText);
         var geoJsonLayer = L.geoJSON(data, {
+          pointToLayer: function(feature, latlng) {
+            return L.marker(latlng, {
+              icon: iconLocalgroup
+            });
+          },
           onEachFeature: function(feature, layer) {
             layer.bindPopup(getPopupContent(feature.properties), {
               keepInView: true,
