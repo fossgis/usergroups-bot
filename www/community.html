@@ -22,7 +22,7 @@
     function getPopupContent(properties) {
       content = "<ul>";
       properties.forEach(function(property) {
-        content += "<li><a href='" + property.url + "'>" + property.name + "</a></li>";
+        content += "<li><a href='" + property.url + "'>" + property.name + "</a> - " + property.description + "</li>";
       })
       content += "</ul>";
       return content;
