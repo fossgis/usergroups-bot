@@ -17,6 +17,7 @@
 
 <body>
   <div id="mapid">&nbsp;</div>
+  <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
   <script>
     function getPopupContent(properties) {
       content = "<ul>";
@@ -52,6 +53,10 @@
     xhr.onload = function() {
       if (xhr.status === 200) {
         var data = JSON.parse(xhr.responseText);
+        //sort by polygon area so that smaller areas are on top of larger areas
+        data.features.sort(function(a, b) {
+          return turf.area(b) - turf.area(a)
+        });
         var geoJsonLayer = L.geoJSON(data, {
           onEachFeature: function(feature, layer) {
             layer.bindPopup(getPopupContent(feature.properties), {
