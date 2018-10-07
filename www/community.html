@@ -19,12 +19,23 @@
   <div id="mapid">&nbsp;</div>
   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
   <script>
-    function getPopupContent(properties) {
-      content = "<ul>";
-      properties.forEach(function(property) {
-        content += "<li><a href='" + property.url + "'>" + property.name + "</a> - " + property.description + "</li>";
-      })
-      content += "</ul>";
+    function getPopupContentCommunity(feature) {
+      content = "";
+      if (feature.properties.length > 0) {
+        feature.properties.forEach(function(property) {
+          content += "<span>";
+          content += "<a href='" + property.url + "'>";
+          title = property.description;
+          if (property.type === "slack") {
+            title = property.signupUrl;
+          }
+          content += "<img src='images/community/" + property.type + ".png' title='" + title + "' height='32px'>";
+          content += "</a>";
+          content += "</span>&nbsp;";
+        })
+      } else {
+        content = feature.id + " has no properties";
+      }
       return content;
     }
 
@@ -57,15 +68,24 @@
         data.features.sort(function(a, b) {
           return turf.area(b) - turf.area(a)
         });
-        var geoJsonLayer = L.geoJSON(data, {
+        var communityJsonLayer = L.geoJSON(data, {
+          style: function(geoJsonFeature) {
+            color = '#3388ff'
+            if (geoJsonFeature.properties.length == 0) {
+              color = '#AA5555'
+            }
+            return {
+              color: color
+            }
+          },
           onEachFeature: function(feature, layer) {
-            layer.bindPopup(getPopupContent(feature.properties), {
+            layer.bindPopup(getPopupContentCommunity(feature), {
               keepInView: true,
               autoPanPadding: [20, 20]
             });
           }
         });
-        markers.addLayer(geoJsonLayer);
+        markers.addLayer(communityJsonLayer);
       }
     };
     xhr.send();
@@ -73,15 +93,7 @@
     mymap.addLayer(markers);
   </script>
   <footer>
-    Data harvested by <a href='http://wiki.openstreetmap.org/wiki/User:UserGroupsBot'>UserGroupsBot</a> at <script>
-      document.write(export_date);
-    </script> (every 6 hours) | <a href="lastrun.log">Log of last run</a><br>
-    <script>
-      document.write(export_number);
-    </script> groups, recently: <script>
-      document.write(export_recent);
-    </script>
-    </p>
+    Data harvested by <a href='https://github.com/osmlab/osm-community-index/'>osm-community-index</a>
   </footer>
 </body>
 

@@ -7,16 +7,8 @@ body {
   margin: 0;
 }
 
-footer {
-  position: fixed;
-  right: 0;
-  left: 0;
-  padding: 10px;
-  background-color: #cbeea7;
-}
-
 #mapid {
-  height: 90%;
+  height: 100%;
 }
 
 .leaflet-popup-content-wrapper {

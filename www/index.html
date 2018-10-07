@@ -17,7 +17,28 @@
 
 <body>
   <div id="mapid">&nbsp;</div>
+  <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
   <script>
+    function getPopupContentCommunity(feature) {
+      content = "";
+      if (feature.properties.length > 0) {
+        feature.properties.forEach(function(property) {
+          content += "<span>";
+          content += "<a href='" + property.url + "'>";
+          title = property.description;
+          if (property.type === "slack") {
+            title = property.signupUrl;
+          }
+          content += "<img src='images/community/" + property.type + ".png' title='" + title + "' height='32px'>";
+          content += "</a>";
+          content += "</span>&nbsp;";
+        })
+      } else {
+        content = feature.id + " has no properties";
+      }
+      return content;
+    }
+
     function getPopupContent(data) {
       content = "<h2 class='pop_heading'>" + data.name + "</h2>";
       if (data.photo) {
@@ -41,17 +62,41 @@
       return content;
     }
 
-    var mymap = L.map('mapid').setView([25, 15], 2);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png", {
+    var tileOsmDe = L.tileLayer("https://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png", {
       minZoom: 2,
       maxZoom: 16,
       attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
-    }).addTo(mymap);
+    });
 
-    var markers = L.markerClusterGroup({
+    var baseMaps = {
+      "OpenStreetMap DE": tileOsmDe
+    }
+
+    var localMarkersCluster = L.markerClusterGroup({
       maxClusterRadius: 50
     });
+
+    var localGroupsLayer = L.layerGroup([], {
+      attribution: 'Local groups data by <a href="http://wiki.openstreetmap.org/wiki/User:UserGroupsBot">UserGroupsBot</a> at ' + export_date + ' (every 6 hours) | <a href="lastrun.log">Log of last run</a>'
+    });
+    var communityIndexLayer = L.layerGroup([], {
+      attribution: 'Community index data by <a href="https://github.com/osmlab/osm-community-index/">osm-community-index</a>'
+    });
+
+    var overlayMaps = {
+      "Local groups": localGroupsLayer,
+      "Community Index": communityIndexLayer
+    };
+
+    var map = L.map('mapid', {
+      layers: [tileOsmDe, localGroupsLayer],
+      center: [25, 15],
+      zoom: 2
+    });
+
+    L.control.layers(baseMaps, overlayMaps, {
+      collapsed: false
+    }).addTo(map);
 
     var iconLocalgroup = L.icon({
       iconUrl: 'localgroup.png',
@@ -66,7 +111,7 @@
     xhr.onload = function() {
       if (xhr.status === 200) {
         var data = JSON.parse(xhr.responseText);
-        var geoJsonLayer = L.geoJSON(data, {
+        var localLayer = L.geoJSON(data, {
           pointToLayer: function(feature, latlng) {
             return L.marker(latlng, {
               icon: iconLocalgroup
@@ -79,24 +124,44 @@
             });
           }
         });
-        markers.addLayer(geoJsonLayer);
+        localMarkersCluster.addLayer(localLayer);
       }
     };
     xhr.send();
+    localGroupsLayer.addLayer(localMarkersCluster)
 
-    mymap.addLayer(markers);
+    let xhr2 = new XMLHttpRequest();
+    xhr2.open('GET', 'osm-community.json');
+    xhr2.setRequestHeader('Content-Type', 'application/json');
+    xhr2.onload = function() {
+      if (xhr2.status === 200) {
+        var data = JSON.parse(xhr2.responseText);
+        //sort by polygon area so that smaller areas are on top of larger areas
+        data.features.sort(function(a, b) {
+          return turf.area(b) - turf.area(a)
+        });
+        communityJsonLayer = L.geoJSON(data, {
+          style: function(geoJsonFeature) {
+            color = '#3388ff'
+            if (geoJsonFeature.properties.length == 0) {
+              color = '#AA5555'
+            }
+            return {
+              color: color
+            }
+          },
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup(getPopupContentCommunity(feature), {
+              keepInView: true,
+              autoPanPadding: [20, 20]
+            });
+          }
+        });
+        communityJsonLayer.addTo(communityIndexLayer);
+      }
+    };
+    xhr2.send();
   </script>
-  <footer>
-    Data harvested by <a href='http://wiki.openstreetmap.org/wiki/User:UserGroupsBot'>UserGroupsBot</a> at <script>
-      document.write(export_date);
-    </script> (every 6 hours) | <a href="lastrun.log">Log of last run</a><br>
-    <script>
-      document.write(export_number);
-    </script> groups, recently: <script>
-      document.write(export_recent);
-    </script>
-    </p>
-  </footer>
 </body>
 
 </html>
