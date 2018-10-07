@@ -44,7 +44,7 @@
       if (data.photo) {
         content += '<img src="' + data.photo + '" class="pop_image" width="300px">';
       } else {
-        content += '<img src="nophoto.png" class="pop_image" title="No photo available">';
+        content += '<img src="images/localgroups/nophoto.png" class="pop_image" title="No photo available">';
       }
       if (data.when) content += "<p class='pop_content'>" + data.when;
       else content += "<p class='pop_content'> When: ?";
@@ -99,7 +99,7 @@
     }).addTo(map);
 
     var iconLocalgroup = L.icon({
-      iconUrl: 'localgroup.png',
+      iconUrl: 'images/localgroups/localgroup.png',
       iconSize: [22, 22],
       iconAnchor: [11, 11],
       popupAnchor: [0, -11]
