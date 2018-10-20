@@ -29,7 +29,7 @@ for event in events["items"]:
         lon = float(child["properties"]["longitude"][0])
         try:
             properties["locality"] = child["properties"]["locality"][0]
-            properties["country"] = child["properties"]["country"][0]
+            properties["country"] = child["properties"]["country-name"][0]
         except:
             split = False
     features.append(geojson.Feature(
