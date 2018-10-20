@@ -19,6 +19,14 @@
   <div id="mapid">&nbsp;</div>
   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
   <script>
+    function getPopupContentEvent(data) {
+      content = "<h2 class='pop_heading'>" + data.name + "</h2>";
+      // content += "<h3>" + data.category + "</h3>";
+      content += "<i>" + data.locality + ", " + data.country + "</i><br />"
+      content += data.start + " - " + data.end;
+      return content;
+    }
+
     function getPopupContentCommunity(feature) {
       content = "";
       if (feature.properties.length > 0) {
@@ -82,14 +90,18 @@
     var communityIndexLayer = L.layerGroup([], {
       attribution: 'Community index data by <a href="https://github.com/osmlab/osm-community-index/">osm-community-index</a>'
     });
+    var eventsLayer = L.layerGroup([], {
+      attribution: 'events data by <a href="https://wiki.openstreetmap.org/wiki/User:Haribo/Calendar">User:Haribo/Calendar</a>'
+    });
 
     var overlayMaps = {
       "Local groups": localGroupsLayer,
-      "Community Index": communityIndexLayer
+      "Community Index": communityIndexLayer,
+      "Events": eventsLayer
     };
 
     var map = L.map('mapid', {
-      layers: [tileOsmDe, localGroupsLayer],
+      layers: [tileOsmDe, eventsLayer],
       center: [25, 15],
       zoom: 2
     });
@@ -161,6 +173,37 @@
       }
     };
     xhr2.send();
+
+    let xhr3 = new XMLHttpRequest();
+    xhr3.open('GET', 'osm-events.json');
+    xhr3.setRequestHeader('Content-Type', 'application/json');
+    xhr3.onload = function() {
+      if (xhr3.status === 200) {
+        var data = JSON.parse(xhr3.responseText);
+        var eventLayer = L.geoJSON(data, {
+          pointToLayer: function(feature, latlng) {
+            eventiconurl = 'images/events/' + feature.properties.category + '.png'
+            eventicon = L.icon({
+              iconUrl: eventiconurl,
+              iconSize: [22, 22],
+              iconAnchor: [11, 11],
+              popupAnchor: [0, -11]
+            });
+            return L.marker(latlng, {
+              icon: eventicon
+            });
+          },
+          onEachFeature: function(feature, layer) {
+            layer.bindPopup(getPopupContentEvent(feature.properties), {
+              keepInView: true,
+              autoPanPadding: [20, 20]
+            });
+          }
+        });
+        eventsLayer.addLayer(eventLayer);
+      }
+    };
+    xhr3.send();
   </script>
 </body>
 
