@@ -12,6 +12,7 @@ import datetime
 import logging
 import urllib
 import time
+import re
 
 
 def loadAllUserGroups(user, password):
@@ -81,6 +82,11 @@ def __getTemplateAttributes(page):
     attrs = {}  # the parsed dictionary of the template attributes
     source = page.getWikiText(False).decode("utf-8")  # API uses UTF-8
     source = urllib.unquote(source).replace('\n', "")
+
+    # remove comments
+    commentMatcher = re.compile("<!--.*?-->")
+    source = commentMatcher.sub("", source)
+
     # extract template and cut it's attributes
     start = source.find("{{user group") + len("{{user group") + 1
     end = source.find("}}", start)
