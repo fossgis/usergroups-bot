@@ -15,7 +15,7 @@ import logging
 
 
 def saveCache(groups):
-    fcache = file("usergroups.cache", "w")
+    fcache = open("usergroups.cache", "wb")
     pickle.dump(groups, fcache)
     fcache.close()
 
@@ -23,10 +23,10 @@ def saveCache(groups):
 def loadCache():
     groups = {}
     try:
-        fcache = file("usergroups.cache", "r")
+        fcache = open("usergroups.cache", "rb")
         groups = pickle.load(fcache)
         fcache.close()
-    except IOError:
+    except (IOError, EOFError):
         logging.log(logging.WARNING, "no cache file present!")
     return groups
 
@@ -48,7 +48,7 @@ def getNewestUserGroups(currGroups):
 
 def __appendNewestUserGroups(newgroups):
     try:
-        fcache = file("lastgroups.cache", "r")
+        fcache = open("lastgroups.cache", "rb")
         lastgroups = pickle.load(fcache)
         fcache.close()
     except IOError:
@@ -57,7 +57,7 @@ def __appendNewestUserGroups(newgroups):
     lastgroups = newgroups + lastgroups
     if len(lastgroups) >= 5:
         lastgroups = lastgroups[0:4]
-    fcache = file("lastgroups.cache", "w")
+    fcache = open("lastgroups.cache", "wb")
     pickle.dump(lastgroups, fcache)
     fcache.close()
     return lastgroups
@@ -103,7 +103,7 @@ def exportUserGroups(groups, filename):
         rest = ugroup.copy()
         del rest["lonlat"]
         del rest["name"]
-        k.add_placemark(name, point, "usergroup", rest)
+        k.add_placemark(name, point[0], point[1], "usergroup", rest)
     k.save(filename)
 
 
@@ -122,7 +122,7 @@ def exportUserGroupsCountries(groups, langCodes, filename):
             rest = ugroup.copy()
             del rest["lonlat"]
             del rest["name"]
-            k.add_placemark(name, point, "usergroup", rest)
+            k.add_placemark(name, point[0], point[1], "usergroup", rest)
         k.save(filename)
     except KeyError:
         sys.stderr.write("\nBad usergroup in countries")

@@ -10,14 +10,14 @@ a simple KML 2.2 lib providing Placemark and styling support using DOM
 import xml.dom.minidom
 import codecs
 import pprint
-from StringIO import StringIO
+from io import StringIO
 
 
 class kml:
     def __init__(self,title,description):
         """Add KML preamble"""
-        title=unicode(title)
-        description=unicode(description)
+        title=str(title)
+        description=str(description)
         self.__doc = xml.dom.minidom.Document()
         kml = self.__doc.createElement('kml')
         kml.setAttribute('xmlns', 'http://www.opengis.net/kml/2.2')
@@ -35,10 +35,10 @@ class kml:
         docDesc.appendChild(docDesc_text)
         self.__idcounter=0
         self.__kml=document
-        
+
     def add_style(self,name, icon):
-        name=unicode(name)
-        icon=unicode(icon)
+        name=str(name)
+        icon=str(icon)
         """Add a simple Style block with a icon"""
         style = self.__doc.createElement('Style')
         style.setAttribute('id', name)
@@ -55,8 +55,8 @@ class kml:
         scale.appendChild(scale_text)
         iconurl=self.__doc.createTextNode(icon)
         href.appendChild(iconurl)
-        
-    def add_placemark(self, name, (lon,lat), style,attributes):
+
+    def add_placemark(self, name, lon, lat, style,attributes):
         """Generate the KML Placemark for a given address."""
         name=name
         style=style
@@ -91,6 +91,3 @@ class kml:
         out = codecs.open(filename,'w+',"utf-8")
         self.__doc.writexml(out,encoding="utf-8")
         out.close()
-
-    
-    

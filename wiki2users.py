@@ -60,9 +60,9 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:], "u:p:d", [
                                    "user=", "password=", "debug"])
-    except getopt.GetoptError, err:
-        print str(err)  # will print something like "option -a not recognized"
-        print "Usage: -u username -p password"
+    except getopt.GetoptError as err:
+        print(err)  # will print something like "option -a not recognized"
+        print("Usage: -u username -p password")
         sys.exit(2)
     user = None
     password = None

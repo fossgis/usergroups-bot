@@ -5,9 +5,9 @@ Created on 20.06.2011
 @author: Matthias Meißer
 '''
 
-from wikitools import wiki
-from wikitools import api
-from wikitools import pagelist
+from wikitools3 import wiki
+from wikitools3 import api
+from wikitools3 import pagelist
 import datetime
 import logging
 import urllib
@@ -28,8 +28,9 @@ def __loginSite(user, password):
     global site
     # connect to OSM wiki
     site = wiki.Wiki("https://wiki.openstreetmap.org/w/api.php")
-    site.login(user, password)
     site.setUserAgent("UserGroupsBot 0.1")
+    token = site.getToken("login")
+    site.login(user, password, False, False, True, "https://wiki.openstreetmap.org/w/api.php", token )
 
 
 def __getTemplatesList():
@@ -46,42 +47,42 @@ def __getUsergroups(query):
     list = pagelist.listFromQuery(site, query["query"]["embeddedin"])
     for page in list:
         # some embedded the template within other templates so we receive fakes
-        if page.getWikiText(False).find("{{user group") > -1:
+        if page.getWikiText(False).find(b"{{user group") > -1:
             logging.log(logging.DEBUG, "request " + page.title)
             try:
-                usergroup = __getTemplateAttributes(page)
+	            usergroup = __getTemplateAttributes(page)
 
-                # some data quality checks, output to log
-                if usergroup["url"][-20:].replace(" ", "_") == usergroup["wiki"][-20:].replace(" ", "_"):
-                    logging.info("info: " + page.title +
-                                 " - " + "url is like wikiurl")
-                if usergroup["name"] == "":
-                    logging.warning(
-                        "warning: " + page.title + " - " + "no name")
-                if usergroup["country"] == "":
-                    logging.warning("warning: " + page.title + " - " +
-                                    "no country set, so isn't in any country-filtered files (e.g. osm_user_groups_DACH.json)")
-                lastedit = datetime.datetime.strptime(
-                    usergroup["lastedit"], "%Y-%m-%dT%H:%M:%SZ")
-                days = today - lastedit
-                if days.days > 365:
-                    logging.info("info: " + page.title +
-                                 " - " + "last edit: " + usergroup["lastedit"])
-                if usergroup["lonlat"] in dublicates:
-                    logging.error("error: " + page.title +
-                                  " - " + "lat/lon already used")
-                usergroups.append(usergroup)
-                dublicates.add(usergroup["lonlat"])
+	            # some data quality checks, output to log
+	            if usergroup["url"][-20:].replace(" ", "_") == usergroup["wiki"][-20:].replace(" ", "_"):
+	                logging.info("info: " + page.title +
+	                             " - " + "url is like wikiurl")
+	            if usergroup["name"] == "":
+	                logging.warning(
+	                    "warning: " + page.title + " - " + "no name")
+	            if usergroup["country"] == "":
+	                logging.warning("warning: " + page.title + " - " +
+	                                "no country set, so isn't in any country-filtered files (e.g. osm_user_groups_DACH.json)")
+	            lastedit = datetime.datetime.strptime(
+	                usergroup["lastedit"], "%Y-%m-%dT%H:%M:%SZ")
+	            days = today - lastedit
+	            if days.days > 365:
+	                logging.info("info: " + page.title +
+	                             " - " + "last edit: " + usergroup["lastedit"])
+	            if usergroup["lonlat"] in dublicates:
+	                logging.error("error: " + page.title +
+	                              " - " + "lat/lon already used")
+	            usergroups.append(usergroup)
+	            dublicates.add(usergroup["lonlat"])
             except Exception as e:
                 logging.log(logging.ERROR, "error: " +
-                            page.title + " - " + unicode(e))
+                            page.title + " - " + str(e))
     return usergroups
 
 
 def __getTemplateAttributes(page):
     attrs = {}  # the parsed dictionary of the template attributes
     source = page.getWikiText(False).decode("utf-8")  # API uses UTF-8
-    source = urllib.unquote(source).replace('\n', "")
+    source = urllib.request.unquote(source).replace('\n', "")
 
     # remove comments
     commentMatcher = re.compile("<!--.*?-->")
@@ -185,5 +186,7 @@ def __getImageInfos(name):
         time.sleep(1)
         request = api.APIRequest(site, imageURL)
         result = request.query()
-        url = result["query"]["pages"].values()[0]["imageinfo"][0]["url"]
+        values = list(result["query"]["pages"].values())
+        imageinfo = values[0]["imageinfo"]
+        url = imageinfo[0]["url"]
         return url
