@@ -35,8 +35,9 @@ canupload = True
 import json
 
 try:
-    import gzip
-    from io import StringIO
+    #import gzip
+    #from io import StringIO
+    gzip = False
 except:
     gzip = False
 
