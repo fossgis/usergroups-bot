@@ -35,9 +35,8 @@ canupload = True
 import json
 
 try:
-    #import gzip
-    #from io import StringIO
-    gzip = False
+    import gzip
+    import  io
 except:
     gzip = False
 
@@ -278,7 +277,7 @@ for queries requring multiple requests""",
                     encoding = self.response.get("Content-encoding")
                     if encoding in ("gzip", "x-gzip"):
                         data = gzip.GzipFile(
-                            "", "rb", 9, StringIO.StringIO(data.read())
+                            None, "rb", 9, io.BytesIO(data.read())
                         )
             except catcherror as exc:
                 errname = sys.exc_info()[0].__name__
